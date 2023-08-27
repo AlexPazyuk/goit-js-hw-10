@@ -4,7 +4,6 @@ import Notiflix from "notiflix";
 import SlimSelect from 'slim-select'
 import 'slim-select/dist/slimselect.css'
 
-
 const breedSelect = document.querySelector(".breed-select");
 const loader = document.querySelector(".loader");
 const catInfo = document.querySelector(".cat-info");
@@ -20,21 +19,29 @@ function slim() {
         select: '#breed-select'
     })
 }
+
 async function updateBreeds() {
-    try {
+  try {
     loader.style.display = "block";
     breedSelect.disabled = true;
+    
     const breeds = await fetchBreeds();
-    breeds.forEach(breed => {
-      const option = document.createElement("option");
-      option.value = breed.id;
-      option.textContent = breed.name;
-      breedSelect.appendChild(option);
+    const breedOptions = breeds.map(breed => ({ value: breed.id, text: breed.name }));
+    
+    breedSelect.innerHTML = ''; // Очистити список перед додаванням нових елементів
+    
+    breedOptions.forEach(option => {
+      const optionElement = document.createElement("option");
+      optionElement.value = option.value;
+      optionElement.textContent = option.text;
+      breedSelect.appendChild(optionElement);
     });
+    
     loader.style.display = "none";
     breedSelect.style.display = "block";
-        breedSelect.disabled = false;
-        slim();
+    breedSelect.disabled = false;
+    
+    slim();
   } catch (e) {
     Notiflix.Notify.failure("Failed to fetch breeds"); // Використання Notiflix для повідомлення про помилку
   }
@@ -43,6 +50,7 @@ async function updateBreeds() {
 breedSelect.addEventListener("change", async event => {
   clearData();
   loader.style.display = "block";
+  
   try {
     const breedId = event.target.value;
     const catData = await fetchCatByBreed(breedId);
@@ -70,4 +78,3 @@ document.addEventListener("DOMContentLoaded", () => {
   updateBreeds();
   Notiflix.Notify.success("Breeds loaded successfully"); // Використання Notiflix для повідомлення про успішне завантаження
 });
-
