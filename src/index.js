@@ -28,14 +28,16 @@ async function updateBreeds() {
     const breeds = await fetchBreeds();
     const breedOptions = breeds.map(breed => ({ value: breed.id, text: breed.name }));
     
-    breedSelect.innerHTML = ''; // Очистити список перед додаванням нових елементів
+      const optionElements = breedOptions.map(option => {
+          const optionElement = document.createElement("option");
+          optionElement.value = option.value;
+          optionElement.textContent = option.text;
+          return optionElement;
+        
+      }); 
     
-    breedOptions.forEach(option => {
-      const optionElement = document.createElement("option");
-      optionElement.value = option.value;
-      optionElement.textContent = option.text;
-      breedSelect.appendChild(optionElement);
-    });
+    breedSelect.innerHTML = ''; // Очистити список перед додаванням нових елементів
+    breedSelect.append(...optionElements);
     
     loader.style.display = "none";
     breedSelect.style.display = "block";
@@ -78,3 +80,4 @@ document.addEventListener("DOMContentLoaded", () => {
   updateBreeds();
   Notiflix.Notify.success("Breeds loaded successfully"); // Використання Notiflix для повідомлення про успішне завантаження
 });
+
